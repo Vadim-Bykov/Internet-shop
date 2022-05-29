@@ -1,4 +1,4 @@
-import { Sequelize, Options } from 'sequelize';
+import { Sequelize } from 'sequelize';
 
 export const db = new Sequelize(
   process.env.DB_NAME as string,

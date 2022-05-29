@@ -3,12 +3,12 @@ import express, { Application } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import fileUpload from 'express-fileupload';
-// import * as modals from './models/models';
 import { db } from './db';
+import * as modals from './models/models';
 import { router } from './routes';
 import { errorMiddleware } from './middlewares/ErrorMiddleware';
 
-const modals = require('./models/models');
+// const modals = require('./models/models');
 
 const PORT = process.env.PORT || 3000;
 
