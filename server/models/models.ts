@@ -4,16 +4,19 @@ import { db } from '../db';
 const { DataTypes } = sequelize;
 
 export interface UserAttributes {
-  id?: IntegerDataType;
+  id: IntegerDataType;
   email: string;
   password: string;
   roles: string[];
   activationLink: string;
-  isActivated?: boolean;
+  isActivated: boolean;
   picture?: string;
 }
 
-type UserCreationAttributes = Optional<UserAttributes, 'roles'>;
+type UserCreationAttributes = Optional<
+  UserAttributes,
+  'roles' | 'id' | 'isActivated' | 'picture'
+>;
 
 export const User: ModelDefined<UserAttributes, UserCreationAttributes> =
   db.define('user', {
@@ -36,7 +39,6 @@ export interface IToken {
 export const Token: ModelDefined<IToken, {}> = db.define('token', {
   id: { type: DataTypes.INTEGER(), primaryKey: true, autoIncrement: true },
   refreshToken: { type: DataTypes.STRING(), allowNull: false },
-  // userId: { type: DataTypes.INTEGER(), allowNull: false },
 });
 
 export const Basket = db.define('basket', {

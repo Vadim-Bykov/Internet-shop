@@ -22,13 +22,10 @@ export const saveRefreshToken = async (
   userId: IntegerDataType,
   refreshToken: string
 ) => {
-  console.log({ userId, refreshToken });
-
   const tokenData = await Token.findOne({ where: { userId } });
 
-  console.log({ tokenData });
   if (tokenData) {
-    return tokenData.update('refreshToken', refreshToken);
+    return await Token.update({ refreshToken, userId }, { where: { userId } });
   }
 
   await Token.create({

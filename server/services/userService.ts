@@ -38,10 +38,32 @@ export const registration = async ({
     roles: role && [role],
   });
 
-  const userDto = getUserDto(user as unknown as IUserDto);
+  const userDto = getUserDto(user.get());
   const { accessToken, refreshToken } = tokenService.generateToken(userDto);
-  console.log({ accessToken, refreshToken });
 
+  await tokenService.saveRefreshToken(userDto.id, refreshToken);
+
+  return { user: userDto, accessToken, refreshToken };
+};
+
+interface ILoginBody {
+  email: string;
+  password: string;
+}
+export const login = async ({ email, password }: ILoginBody) => {
+  const user = await User.findOne({ where: { email } });
+  if (!user) {
+    throw ApiError.badRequest(`User with email ${email} doesn't exist`);
+  }
+
+  const isValidPassword = await bcrypt.compare(password, user.get().password);
+  if (!isValidPassword) {
+    throw ApiError.badRequest('Password is invalid');
+  }
+
+  const userDto = getUserDto(user.get());
+
+  const { accessToken, refreshToken } = tokenService.generateToken(userDto);
   await tokenService.saveRefreshToken(userDto.id, refreshToken);
 
   return { user: userDto, accessToken, refreshToken };

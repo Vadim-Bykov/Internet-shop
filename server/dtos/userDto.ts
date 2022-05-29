@@ -15,7 +15,7 @@ export const getUserDto = ({
   isActivated,
   picture,
   roles,
-}: IUserDto) => ({
+}: UserAttributes) => ({
   email,
   id,
   isActivated,
