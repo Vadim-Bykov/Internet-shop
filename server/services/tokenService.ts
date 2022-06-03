@@ -33,3 +33,8 @@ export const saveRefreshToken = async (
     userId,
   });
 };
+
+export const removeRefreshToken = async (refreshToken: string) => {
+  const isDestroyed = await Token.destroy({ where: { refreshToken } });
+  return !!isDestroyed;
+};

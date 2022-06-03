@@ -68,3 +68,8 @@ export const login = async ({ email, password }: ILoginBody) => {
 
   return { user: userDto, accessToken, refreshToken };
 };
+
+export const logout = async (refreshToken: string) => {
+  const isDestroyed = await tokenService.removeRefreshToken(refreshToken);
+  return isDestroyed;
+};

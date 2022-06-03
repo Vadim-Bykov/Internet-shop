@@ -36,9 +36,14 @@ export const login: TController = async (req, res, next) => {
   try {
     validateInputData(req, next);
 
-    const tokens = await userService.login(req.body);
+    const userDto = await userService.login(req.body);
 
-    res.json(tokens);
+    res.cookie('refreshToken', userDto.refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
+
+    res.json(userDto);
   } catch (error) {
     next(error);
   }
@@ -46,9 +51,13 @@ export const login: TController = async (req, res, next) => {
 
 export const logout: TController = async (req, res, next) => {
   try {
-    // return res.json(id);
+    const { refreshToken } = req.cookies;
+    const isDestroyed = await userService.logout(refreshToken);
+
+    res.clearCookie('refreshToken');
+    return res.json({ isDestroyed });
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
