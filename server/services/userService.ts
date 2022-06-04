@@ -73,3 +73,31 @@ export const logout = async (refreshToken: string) => {
   const isDestroyed = await tokenService.removeRefreshToken(refreshToken);
   return isDestroyed;
 };
+
+export const refresh = async (refreshToken: string) => {
+  if (!refreshToken) {
+    throw ApiError.unauthorized();
+  }
+
+  const userData = tokenService.validateRefreshToken(refreshToken);
+  const tokenFromDb = await tokenService.findRefreshToken(refreshToken);
+  if (!userData || !tokenFromDb) {
+    throw ApiError.unauthorized();
+  }
+
+  const user = await User.findOne({ where: { id: userData.id } });
+
+  if (!user) {
+    throw ApiError.badRequest('User was not found');
+  }
+
+  const userDto = getUserDto(user.get());
+  const tokens = tokenService.generateToken(userDto);
+
+  const saved = await tokenService.saveRefreshToken(
+    userDto.id,
+    tokens.refreshToken
+  );
+
+  return { ...tokens, user: userDto };
+};

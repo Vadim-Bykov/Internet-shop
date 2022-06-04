@@ -15,3 +15,4 @@ userRouter.post(
 userRouter.post('/login', loginValidator, userController.login);
 userRouter.post('/logout', userController.logout);
 userRouter.get('/auth', userController.checkAuth);
+userRouter.get('/refresh', userController.refresh);
