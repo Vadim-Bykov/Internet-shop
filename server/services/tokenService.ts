@@ -54,7 +54,6 @@ export const validateRefreshToken = (refreshToken: string) => {
 export const validateAccessToken = (accessToken: string) => {
   try {
     const userData = jwt.verify(accessToken, JWT_ACCESS_SECRET as string);
-    console.log({ userData });
 
     return userData as IUserDto;
   } catch (error) {

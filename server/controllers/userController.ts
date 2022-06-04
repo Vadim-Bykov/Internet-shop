@@ -87,3 +87,24 @@ export const refresh: TController = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getAllUsers: TController = async (req, res, next) => {
+  try {
+    const users = await userService.getAllUsers();
+
+    res.json(users);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUserById: TController = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await userService.getUserById(id);
+
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+};

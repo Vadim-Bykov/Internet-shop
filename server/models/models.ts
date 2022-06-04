@@ -3,11 +3,13 @@ import { db } from '../db';
 
 const { DataTypes } = sequelize;
 
+export type TRole = 'ADMIN' | 'USER';
+
 export interface UserAttributes {
   id: IntegerDataType;
   email: string;
   password: string;
-  roles: string[];
+  roles: TRole[];
   activationLink: string;
   isActivated: boolean;
   picture?: string;

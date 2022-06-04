@@ -101,3 +101,22 @@ export const refresh = async (refreshToken: string) => {
 
   return { ...tokens, user: userDto };
 };
+
+export const getAllUsers = async () => {
+  const users = await User.findAll();
+  return users;
+};
+
+export const getUserById = async (id: string) => {
+  if (!id) {
+    throw ApiError.badRequest('No id was sent');
+  }
+  const user = await User.findOne({ where: { id } });
+  if (!user) {
+    throw ApiError.badRequest(`No user was fount with id: ${id}`);
+  }
+
+  const userDto = getUserDto(user.get());
+
+  return userDto;
+};
