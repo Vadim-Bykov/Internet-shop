@@ -1,19 +1,12 @@
 import { Model } from 'sequelize/types';
 import { ApiError } from '../error/ApiError';
-import { Type } from '../models/models';
-
-interface ICrationResponse {
-  id: string;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { Type, TypeCreationAttributes } from '../models/models';
 
 type TCreateFunc = (
   name: string
-) => Promise<Model<{ name: string }, ICrationResponse>>;
+) => Promise<Model<{ name: string }, TypeCreationAttributes>>;
 
-export const create = async (name: string) => {
+export const create: TCreateFunc = async (name: string) => {
   const typeCandidate = await Type.findOne({ where: { name } });
 
   if (typeCandidate) {

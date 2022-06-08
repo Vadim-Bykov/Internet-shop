@@ -70,10 +70,22 @@ export const Device: ModelDefined<DeviceAttributes, DeviceCreationAttributes> =
     img: { type: DataTypes.STRING(), allowNull: false },
   });
 
-export const Type = db.define('type', {
-  id: { type: DataTypes.INTEGER(), primaryKey: true, autoIncrement: true },
-  name: { type: DataTypes.STRING(), unique: true, allowNull: false },
-});
+interface TypeAttributes {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+export type TypeCreationAttributes = Optional<
+  TypeAttributes,
+  'createdAt' | 'updatedAt' | 'id'
+>;
+
+export const Type: ModelDefined<TypeAttributes, TypeCreationAttributes> =
+  db.define('type', {
+    id: { type: DataTypes.INTEGER(), primaryKey: true, autoIncrement: true },
+    name: { type: DataTypes.STRING(), unique: true, allowNull: false },
+  });
 
 export const Brand = db.define('brand', {
   id: { type: DataTypes.INTEGER(), primaryKey: true, autoIncrement: true },

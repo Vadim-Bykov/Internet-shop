@@ -1,4 +1,4 @@
-import { body, validationResult } from 'express-validator';
+import { body } from 'express-validator';
 
 const email = body('email', 'Invalid email').isEmail();
 const password = body(

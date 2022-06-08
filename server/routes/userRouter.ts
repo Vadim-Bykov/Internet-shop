@@ -17,9 +17,13 @@ userRouter.post('/login', loginValidator, userController.login);
 userRouter.post('/logout', userController.logout);
 userRouter.get('/auth', userController.checkAuth);
 userRouter.get('/refresh', userController.refresh);
-userRouter.get('/', authMiddleware(['ADMIN']), userController.getAllUsers);
+userRouter.get(
+  '/',
+  authMiddleware(['ADMIN', 'USER']),
+  userController.getAllUsers
+);
 userRouter.get(
   '/:id',
-  authMiddleware(['USER', 'ADMIN'], true),
+  authMiddleware(['USER'], true),
   userController.getUserById
 );
