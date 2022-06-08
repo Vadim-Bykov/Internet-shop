@@ -13,3 +13,5 @@ typeRouter.post(
   typeController.create
 );
 typeRouter.get('/', typeController.getAll);
+typeRouter.get('/details', typeController.getTypeById);
+typeRouter.put('/:id', createTypeValidator, typeController.updateType);

@@ -22,3 +22,31 @@ export const getAll = async () => {
   const types = await Type.findAll();
   return types;
 };
+
+export const updateType = async (id: string, name: string) => {
+  const type = await Type.findOne({ where: { id } });
+
+  if (!type) {
+    throw ApiError.badRequest(`Type with id=${id} is not exists`);
+  }
+
+  const updatedType = await Type.update(
+    { name },
+    { where: { id }, returning: true }
+  );
+  console.log({ updatedType });
+
+  return updatedType;
+};
+
+export const getTypeById = async (id: string) => {
+  if (!id) {
+    throw ApiError.badRequest('Set id to get data');
+  }
+  const type = await Type.findOrBuild({ where: { id } });
+  if (!type) {
+    throw ApiError.badRequest(`Type with id=${id} is not exists`);
+  }
+
+  return type;
+};
