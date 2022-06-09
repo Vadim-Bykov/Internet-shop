@@ -1,30 +1,53 @@
-import sequelize, { ModelDefined, Optional } from 'sequelize';
+import sequelize, { IntegerDataType, ModelDefined, Optional } from 'sequelize';
 import { db } from '../db';
 
 const { DataTypes } = sequelize;
 
-interface UserAttributes {
-  id: number;
+export type TRole = 'ADMIN' | 'USER';
+
+export interface UserAttributes {
+  id: IntegerDataType;
   email: string;
   password: string;
-  role: string;
+  roles: TRole[];
+  activationLink: string;
+  isActivated: boolean;
+  picture?: string;
 }
 
-type UserCreationAttributes = Optional<UserAttributes, 'role'>;
+type UserCreationAttributes = Optional<
+  UserAttributes,
+  'roles' | 'id' | 'isActivated' | 'picture'
+>;
 
 export const User: ModelDefined<UserAttributes, UserCreationAttributes> =
   db.define('user', {
     id: { type: DataTypes.INTEGER(), primaryKey: true, autoIncrement: true },
     email: { type: DataTypes.STRING(), unique: true },
     password: { type: DataTypes.STRING() },
-    role: { type: DataTypes.STRING(), defaultValue: 'USER' },
+    roles: {
+      type: DataTypes.ARRAY(DataTypes.STRING()),
+      defaultValue: ['USER'],
+    },
+    activationLink: { type: DataTypes.STRING(), allowNull: false },
+    isActivated: { type: DataTypes.BOOLEAN(), defaultValue: false },
+    picture: { type: DataTypes.STRING() },
   });
+
+export interface IToken {
+  refreshToken: string;
+  userId: IntegerDataType;
+}
+export const Token: ModelDefined<IToken, {}> = db.define('token', {
+  id: { type: DataTypes.INTEGER(), primaryKey: true, autoIncrement: true },
+  refreshToken: { type: DataTypes.STRING(), allowNull: false },
+});
 
 export const Basket = db.define('basket', {
   id: { type: DataTypes.INTEGER(), primaryKey: true, autoIncrement: true },
 });
 
-export const BasketDevice = db.define('besket_device', {
+export const BasketDevice = db.define('basket_device', {
   id: { type: DataTypes.INTEGER(), primaryKey: true, autoIncrement: true },
 });
 
@@ -47,10 +70,22 @@ export const Device: ModelDefined<DeviceAttributes, DeviceCreationAttributes> =
     img: { type: DataTypes.STRING(), allowNull: false },
   });
 
-export const Type = db.define('type', {
-  id: { type: DataTypes.INTEGER(), primaryKey: true, autoIncrement: true },
-  name: { type: DataTypes.STRING(), unique: true, allowNull: false },
-});
+interface TypeAttributes {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+export type TypeCreationAttributes = Optional<
+  TypeAttributes,
+  'createdAt' | 'updatedAt' | 'id'
+>;
+
+export const Type: ModelDefined<TypeAttributes, TypeCreationAttributes> =
+  db.define('type', {
+    id: { type: DataTypes.INTEGER(), primaryKey: true, autoIncrement: true },
+    name: { type: DataTypes.STRING(), unique: true, allowNull: false },
+  });
 
 export const Brand = db.define('brand', {
   id: { type: DataTypes.INTEGER(), primaryKey: true, autoIncrement: true },
@@ -74,6 +109,9 @@ export const TypeBrand = db.define('type_brand', {
 
 User.hasOne(Basket);
 Basket.belongsTo(User);
+
+User.hasOne(Token);
+Token.belongsTo(User);
 
 User.hasMany(Rating);
 Rating.belongsTo(User);

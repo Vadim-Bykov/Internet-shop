@@ -27,3 +27,31 @@ export const getAll: TController = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateType: TController = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(ApiError.badRequest('Validator error', errors.array()));
+  }
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    const type = await typeService.updateType(id, name);
+    console.log({ type });
+
+    res.json(type);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getTypeById: TController = async (req, res, next) => {
+  try {
+    const { id } = req.query;
+    const type = await typeService.getTypeById(id as string);
+
+    res.json(type);
+  } catch (error) {
+    next(error);
+  }
+};

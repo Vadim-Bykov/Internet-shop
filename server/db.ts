@@ -1,4 +1,4 @@
-import { Sequelize, Options } from 'sequelize';
+import { Sequelize } from 'sequelize';
 
 export const db = new Sequelize(
   process.env.DB_NAME as string,
@@ -7,6 +7,6 @@ export const db = new Sequelize(
   {
     dialect: 'postgres',
     host: process.env.HOST,
-    port: 8080,
+    port: Number(process.env.DB_PORT),
   }
 );

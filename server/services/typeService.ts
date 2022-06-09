@@ -1,19 +1,12 @@
 import { Model } from 'sequelize/types';
 import { ApiError } from '../error/ApiError';
-import { Type } from '../models/models';
-
-interface ICrationResponse {
-  id: string;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { Type, TypeCreationAttributes } from '../models/models';
 
 type TCreateFunc = (
   name: string
-) => Promise<Model<{ name: string }, ICrationResponse>>;
+) => Promise<Model<{ name: string }, TypeCreationAttributes>>;
 
-export const create = async (name: string) => {
+export const create: TCreateFunc = async (name: string) => {
   const typeCandidate = await Type.findOne({ where: { name } });
 
   if (typeCandidate) {
@@ -28,4 +21,32 @@ export const create = async (name: string) => {
 export const getAll = async () => {
   const types = await Type.findAll();
   return types;
+};
+
+export const updateType = async (id: string, name: string) => {
+  const type = await Type.findOne({ where: { id } });
+
+  if (!type) {
+    throw ApiError.badRequest(`Type with id=${id} is not exists`);
+  }
+
+  const updatedType = await Type.update(
+    { name },
+    { where: { id }, returning: true }
+  );
+  console.log({ updatedType });
+
+  return updatedType;
+};
+
+export const getTypeById = async (id: string) => {
+  if (!id) {
+    throw ApiError.badRequest('Set id to get data');
+  }
+  const type = await Type.findOrBuild({ where: { id } });
+  if (!type) {
+    throw ApiError.badRequest(`Type with id=${id} is not exists`);
+  }
+
+  return type;
 };
