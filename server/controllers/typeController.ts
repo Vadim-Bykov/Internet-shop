@@ -55,3 +55,14 @@ export const getTypeById: TController = async (req, res, next) => {
     next(error);
   }
 };
+
+export const removeType: TController = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const type = await typeService.removeType(id);
+
+    res.json(type);
+  } catch (error) {
+    next(error);
+  }
+};

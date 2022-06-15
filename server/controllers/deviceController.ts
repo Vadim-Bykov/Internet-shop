@@ -1,10 +1,16 @@
 import { TController } from './controllerTypes';
+import * as deviceService from '../services/deviceService';
 
 export const create: TController = async (req, res, next) => {
   try {
-    res.json();
+    const device = await deviceService.create({
+      ...req.body,
+      img: req.files?.img,
+    });
+
+    res.json(device);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 

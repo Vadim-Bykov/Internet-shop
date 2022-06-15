@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { body } from 'express-validator';
 import * as typeController from '../controllers/typeController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { createTypeValidator } from '../validators/typeValidators';
@@ -14,4 +13,10 @@ typeRouter.post(
 );
 typeRouter.get('/', typeController.getAll);
 typeRouter.get('/details', typeController.getTypeById);
-typeRouter.put('/:id', createTypeValidator, typeController.updateType);
+typeRouter.put(
+  '/:id',
+  createTypeValidator,
+  authMiddleware(['ADMIN']),
+  typeController.updateType
+);
+typeRouter.delete('/:id', authMiddleware(['ADMIN']), typeController.removeType);

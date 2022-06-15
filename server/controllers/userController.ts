@@ -45,6 +45,8 @@ export const login: TController = async (req, res, next) => {
 
     res.json(userDto);
   } catch (error) {
+    console.log({ error });
+
     next(error);
   }
 };

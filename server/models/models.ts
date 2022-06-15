@@ -1,3 +1,4 @@
+import { UploadedFile } from 'express-fileupload';
 import sequelize, { IntegerDataType, ModelDefined, Optional } from 'sequelize';
 import { db } from '../db';
 
@@ -56,10 +57,16 @@ interface DeviceAttributes {
   name: string;
   price: number;
   rating: number;
-  img: string;
+  img: UploadedFile | string;
+  brandId: string;
+  typeId: string;
+  info: DeviceInfoCreationAttributes;
 }
 
-type DeviceCreationAttributes = Optional<DeviceAttributes, 'rating'>;
+export type DeviceCreationAttributes = Optional<
+  DeviceAttributes,
+  'rating' | 'info' | 'id' | 'img'
+>;
 
 export const Device: ModelDefined<DeviceAttributes, DeviceCreationAttributes> =
   db.define('device', {
@@ -97,7 +104,19 @@ export const Rating = db.define('rating', {
   rate: { type: DataTypes.INTEGER(), allowNull: false },
 });
 
-export const DeviceInfo = db.define('device_info', {
+interface DeviceInfoAttributes {
+  id: number;
+  title: string;
+  description: string;
+  deviceId: number;
+}
+
+export type DeviceInfoCreationAttributes = Optional<DeviceInfoAttributes, 'id'>;
+
+export const DeviceInfo: ModelDefined<
+  DeviceInfoAttributes,
+  DeviceInfoCreationAttributes
+> = db.define('device_info', {
   id: { type: DataTypes.INTEGER(), primaryKey: true, autoIncrement: true },
   title: { type: DataTypes.STRING(), allowNull: false },
   description: { type: DataTypes.STRING(), allowNull: false },
