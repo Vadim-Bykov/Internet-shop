@@ -103,3 +103,47 @@ export const getOne = async (id: number) => {
 
   return device;
 };
+
+interface UpdateDevice extends DeviceCreationAttributes {
+  image?: UploadedFile;
+}
+
+export const updateDevice = async ({
+  id,
+  name,
+  price,
+  img,
+  info,
+}: DeviceCreationAttributes) => {
+  const device = await Device.findOne({ where: { id } });
+
+  if (!device) {
+    throw ApiError.badRequest(`Device ${name} doesn't exist`);
+  }
+
+  const fileName = saveFile(img as UploadedFile);
+
+  const updatedDevice = await Device.update(
+    {
+      name,
+      price,
+      img: fileName && fileName,
+    },
+    { where: { id }, returning: true }
+  );
+
+  const deviceDto = updatedDevice[1][0];
+  console.log({ info });
+
+  // if (info) {
+  //   const deviceInfo = await DeviceInfo.update(
+  //     { title: info.title, description: info.description },
+  //     { where: { deviceId: id }, returning: true }
+  //   );
+  //   console.log({ deviceInfo });
+
+  //   deviceDto.get().info = deviceInfo[1][0].get();
+  // }
+
+  return deviceDto;
+};

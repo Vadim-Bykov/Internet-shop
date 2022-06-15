@@ -3,6 +3,8 @@ import * as deviceService from '../services/deviceService';
 import { validationResult } from 'express-validator';
 import { ApiError } from '../error/ApiError';
 import { RequestHandler } from 'express';
+import { DeviceCreationAttributes } from '../models/models';
+import { UploadedFile } from 'express-fileupload';
 
 export const create: RequestHandler = async (req, res, next) => {
   try {
@@ -63,6 +65,26 @@ export const getOne: RequestHandler<GetOneParams> = async (req, res, next) => {
     const { id } = req.params;
     const device = await deviceService.getOne(id);
     res.json(device);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateDevice: RequestHandler<
+  { id: number },
+  any,
+  DeviceCreationAttributes
+> = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const updatedDevice = await deviceService.updateDevice({
+      id,
+      ...req.body,
+      img: req.files?.img as UploadedFile,
+    });
+
+    res.json(updatedDevice);
   } catch (error) {
     next(error);
   }
