@@ -12,4 +12,4 @@ deviceRouter.post(
   deviceController.create
 );
 deviceRouter.get('/', deviceController.getAll);
-deviceRouter.get('/: id', deviceController.getOne);
+deviceRouter.get('/:id', deviceController.getOne);

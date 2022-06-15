@@ -7,6 +7,7 @@ import {
 import { ApiError } from '../error/ApiError';
 import { saveFile } from './fileService';
 import { UploadedFile } from 'express-fileupload';
+import { GetAllDevicesReqQuery } from '../controllers/deviceController';
 
 export const create = async ({
   name,
@@ -52,4 +53,53 @@ export const create = async ({
   }
 
   return deviceDto;
+};
+
+export const getAll = async ({
+  brandId,
+  typeId,
+  limit = 10,
+  page = 1,
+}: GetAllDevicesReqQuery) => {
+  const offset = limit * page - limit;
+  let devices;
+
+  if (!brandId && !typeId) {
+    devices = await Device.findAndCountAll({ limit, offset });
+  }
+
+  if (!brandId && typeId) {
+    devices = await Device.findAndCountAll({
+      where: { typeId },
+      limit,
+      offset,
+    });
+  }
+
+  if (brandId && !typeId) {
+    devices = await Device.findAndCountAll({
+      where: { brandId },
+      limit,
+      offset,
+    });
+  }
+
+  if (brandId && typeId) {
+    devices = await Device.findAndCountAll({
+      where: { brandId, typeId },
+      limit,
+      offset,
+    });
+  }
+
+  return { ...devices, page, limit };
+};
+
+export const getOne = async (id: number) => {
+  const device = await Device.findOne({
+    where: { id },
+    include: [{ model: DeviceInfo, as: 'info' }],
+  });
+
+  return device;
 };
