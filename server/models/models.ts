@@ -58,8 +58,8 @@ interface DeviceAttributes {
   price: number;
   rating: number;
   img: UploadedFile | string;
-  brandId: string;
-  typeId: string;
+  brandId: number;
+  typeId: number;
   info: DeviceInfoCreationAttributes;
 }
 
@@ -111,7 +111,10 @@ interface DeviceInfoAttributes {
   deviceId: number;
 }
 
-export type DeviceInfoCreationAttributes = Optional<DeviceInfoAttributes, 'id'>;
+export type DeviceInfoCreationAttributes = Optional<
+  DeviceInfoAttributes,
+  'id' | 'deviceId'
+>;
 
 export const DeviceInfo: ModelDefined<
   DeviceInfoAttributes,

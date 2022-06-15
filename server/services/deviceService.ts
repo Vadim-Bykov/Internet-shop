@@ -1,6 +1,9 @@
-import { v4 } from 'uuid';
-import path from 'path';
-import { Device, DeviceCreationAttributes, DeviceInfo } from '../models/models';
+import {
+  Device,
+  DeviceCreationAttributes,
+  DeviceInfo,
+  DeviceInfoCreationAttributes,
+} from '../models/models';
 import { ApiError } from '../error/ApiError';
 import { saveFile } from './fileService';
 import { UploadedFile } from 'express-fileupload';
@@ -13,9 +16,13 @@ export const create = async ({
   img,
   info,
 }: DeviceCreationAttributes) => {
+  if (!img) {
+    throw ApiError.badRequest('Image is required to upload');
+  }
+
   const candidate = await Device.findOne({ where: { name } });
   if (candidate) {
-    throw ApiError.badRequest(`Device ${candidate} already exists`);
+    throw ApiError.badRequest(`Device ${name} already exists`);
   }
 
   const fileName = saveFile(img as UploadedFile);
@@ -31,9 +38,13 @@ export const create = async ({
   const deviceDto = { ...device.get() };
 
   if (info) {
+    const parsedInfo: DeviceInfoCreationAttributes = JSON.parse(
+      info as unknown as string
+    );
+
     const deviceInfo = await DeviceInfo.create({
-      title: info.title,
-      description: info.description,
+      title: parsedInfo.title,
+      description: parsedInfo.description,
       deviceId: device.get().id,
     });
 
