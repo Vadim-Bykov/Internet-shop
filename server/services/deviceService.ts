@@ -104,10 +104,6 @@ export const getOne = async (id: number) => {
   return device;
 };
 
-interface UpdateDevice extends DeviceCreationAttributes {
-  image?: UploadedFile;
-}
-
 export const updateDevice = async ({
   id,
   name,
@@ -133,17 +129,32 @@ export const updateDevice = async ({
   );
 
   const deviceDto = updatedDevice[1][0];
-  console.log({ info });
 
-  // if (info) {
-  //   const deviceInfo = await DeviceInfo.update(
-  //     { title: info.title, description: info.description },
-  //     { where: { deviceId: id }, returning: true }
-  //   );
-  //   console.log({ deviceInfo });
+  if (info) {
+    const parsedInfo: DeviceInfoCreationAttributes = JSON.parse(
+      info as unknown as string
+    );
+    const deviceInfo = await DeviceInfo.update(
+      { title: parsedInfo.title, description: parsedInfo.description },
+      { where: { deviceId: id }, returning: true }
+    );
 
-  //   deviceDto.get().info = deviceInfo[1][0].get();
-  // }
+    deviceDto.get().info = deviceInfo[1][0].get();
+  }
 
   return deviceDto;
+};
+
+export const removeDevice = async (id: string) => {
+  if (!id) {
+    throw ApiError.badRequest('Set id to remove data');
+  }
+
+  const removedDeviceInfo = await DeviceInfo.destroy({
+    where: { deviceId: id },
+  });
+
+  const removedDevice = await Device.destroy({ where: { id } });
+
+  return { removedDevice, removedDeviceInfo };
 };

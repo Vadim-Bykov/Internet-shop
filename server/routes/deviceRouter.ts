@@ -13,4 +13,15 @@ deviceRouter.post(
 );
 deviceRouter.get('/', deviceController.getAll);
 deviceRouter.get('/:id', deviceController.getOne);
-deviceRouter.put('/:id', deviceController.updateDevice);
+
+deviceRouter.put(
+  '/:id',
+  authMiddleware(['ADMIN']),
+  deviceController.updateDevice
+);
+
+deviceRouter.delete(
+  '/:id',
+  authMiddleware(['ADMIN']),
+  deviceController.removeDevice
+);

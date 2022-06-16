@@ -1,10 +1,10 @@
-import { TController } from './controllerTypes';
 import * as deviceService from '../services/deviceService';
 import { validationResult } from 'express-validator';
 import { ApiError } from '../error/ApiError';
 import { RequestHandler } from 'express';
 import { DeviceCreationAttributes } from '../models/models';
 import { UploadedFile } from 'express-fileupload';
+import { ParamsDictionary } from 'express-serve-static-core';
 
 export const create: RequestHandler = async (req, res, next) => {
   try {
@@ -70,8 +70,12 @@ export const getOne: RequestHandler<GetOneParams> = async (req, res, next) => {
   }
 };
 
+interface UpdateDeviceParams extends ParamsDictionary {
+  id: string;
+}
+
 export const updateDevice: RequestHandler<
-  { id: number },
+  UpdateDeviceParams,
   any,
   DeviceCreationAttributes
 > = async (req, res, next) => {
@@ -79,12 +83,27 @@ export const updateDevice: RequestHandler<
     const { id } = req.params;
 
     const updatedDevice = await deviceService.updateDevice({
-      id,
+      id: Number(id),
       ...req.body,
       img: req.files?.img as UploadedFile,
     });
 
     res.json(updatedDevice);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const removeDevice: RequestHandler<UpdateDeviceParams> = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const { id } = req.params;
+    const removedData = await deviceService.removeDevice(id);
+
+    res.json(removedData);
   } catch (error) {
     next(error);
   }
