@@ -52,15 +52,15 @@ export const BasketDevice = db.define('basket_device', {
   id: { type: DataTypes.INTEGER(), primaryKey: true, autoIncrement: true },
 });
 
-interface DeviceAttributes {
+export interface DeviceAttributes {
   id: number;
   name: string;
   price: number;
-  rating: number;
+  rating?: number;
   img: UploadedFile | string;
   brandId: number;
   typeId: number;
-  info: DeviceInfoCreationAttributes;
+  info?: DeviceInfoCreationAttributes;
 }
 
 export type DeviceCreationAttributes = Optional<
@@ -104,17 +104,14 @@ export const Rating = db.define('rating', {
   rate: { type: DataTypes.INTEGER(), allowNull: false },
 });
 
-interface DeviceInfoAttributes {
-  id: number;
+export interface DeviceInfoAttributes {
+  id?: number;
   title: string;
   description: string;
   deviceId: number;
 }
 
-export type DeviceInfoCreationAttributes = Optional<
-  DeviceInfoAttributes,
-  'id' | 'deviceId'
->;
+export type DeviceInfoCreationAttributes = Optional<DeviceInfoAttributes, 'id'>;
 
 export const DeviceInfo: ModelDefined<
   DeviceInfoAttributes,

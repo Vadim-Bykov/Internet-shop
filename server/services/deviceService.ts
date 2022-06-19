@@ -1,5 +1,6 @@
 import {
   Device,
+  DeviceAttributes,
   DeviceCreationAttributes,
   DeviceInfo,
   DeviceInfoCreationAttributes,
@@ -8,6 +9,7 @@ import { ApiError } from '../error/ApiError';
 import { saveFile } from './fileService';
 import { UploadedFile } from 'express-fileupload';
 import { GetAllDevicesReqQuery } from '../controllers/deviceController';
+import * as deviceInfoService from './deviceInfoService';
 
 export const create = async ({
   name,
@@ -43,13 +45,12 @@ export const create = async ({
       info as unknown as string
     );
 
-    const deviceInfo = await DeviceInfo.create({
-      title: parsedInfo.title,
-      description: parsedInfo.description,
-      deviceId: device.get().id,
+    const deviceInfo = await deviceInfoService.createDeviceInfo({
+      ...parsedInfo,
+      deviceId: deviceDto.id,
     });
 
-    deviceDto.info = deviceInfo.get();
+    deviceDto.info = deviceInfo;
   }
 
   return deviceDto;
@@ -110,7 +111,7 @@ export const updateDevice = async ({
   price,
   img,
   info,
-}: DeviceCreationAttributes) => {
+}: DeviceAttributes) => {
   const device = await Device.findOne({ where: { id } });
 
   if (!device) {
@@ -128,18 +129,19 @@ export const updateDevice = async ({
     { where: { id }, returning: true }
   );
 
-  const deviceDto = updatedDevice[1][0];
+  const deviceDto = updatedDevice[1][0].get();
 
   if (info) {
     const parsedInfo: DeviceInfoCreationAttributes = JSON.parse(
       info as unknown as string
     );
-    const deviceInfo = await DeviceInfo.update(
-      { title: parsedInfo.title, description: parsedInfo.description },
-      { where: { deviceId: id }, returning: true }
-    );
 
-    deviceDto.get().info = deviceInfo[1][0].get();
+    const deviceInfo = await deviceInfoService.updateDeviceInfo({
+      ...parsedInfo,
+      deviceId: id,
+    });
+
+    deviceDto.info = deviceInfo;
   }
 
   return deviceDto;

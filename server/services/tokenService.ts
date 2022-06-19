@@ -8,7 +8,7 @@ const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 
 export const generateToken = (payload: IUserDto) => {
   const accessToken = jwt.sign(payload, JWT_ACCESS_SECRET as string, {
-    expiresIn: '30m',
+    expiresIn: '1h',
   });
 
   const refreshToken = jwt.sign(payload, JWT_REFRESH_SECRET as string, {
