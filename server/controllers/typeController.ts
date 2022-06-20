@@ -37,7 +37,6 @@ export const updateType: TController = async (req, res, next) => {
     const { id } = req.params;
     const { name } = req.body;
     const type = await typeService.updateType(id, name);
-    console.log({ type });
 
     res.json(type);
   } catch (error) {

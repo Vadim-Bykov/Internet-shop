@@ -52,15 +52,15 @@ export const BasketDevice = db.define('basket_device', {
   id: { type: DataTypes.INTEGER(), primaryKey: true, autoIncrement: true },
 });
 
-interface DeviceAttributes {
+export interface DeviceAttributes {
   id: number;
   name: string;
   price: number;
-  rating: number;
+  rating?: number;
   img: UploadedFile | string;
-  brandId: string;
-  typeId: string;
-  info: DeviceInfoCreationAttributes;
+  brandId: number;
+  typeId: number;
+  info?: DeviceInfoCreationAttributes;
 }
 
 export type DeviceCreationAttributes = Optional<
@@ -104,8 +104,8 @@ export const Rating = db.define('rating', {
   rate: { type: DataTypes.INTEGER(), allowNull: false },
 });
 
-interface DeviceInfoAttributes {
-  id: number;
+export interface DeviceInfoAttributes {
+  id?: number;
   title: string;
   description: string;
   deviceId: number;
@@ -138,8 +138,10 @@ Rating.belongsTo(User);
 Basket.hasMany(BasketDevice);
 BasketDevice.belongsTo(Basket);
 
-BasketDevice.hasOne(Device); // ???
-Device.belongsTo(BasketDevice); // ???
+Device.hasMany(BasketDevice);
+BasketDevice.belongsTo(Device);
+// BasketDevice.hasOne(Device); // ???
+// Device.belongsTo(BasketDevice); // ???
 
 Type.hasMany(Device);
 Device.belongsTo(Type);
