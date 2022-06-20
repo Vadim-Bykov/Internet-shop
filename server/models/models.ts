@@ -138,8 +138,10 @@ Rating.belongsTo(User);
 Basket.hasMany(BasketDevice);
 BasketDevice.belongsTo(Basket);
 
-BasketDevice.hasOne(Device); // ???
-Device.belongsTo(BasketDevice); // ???
+Device.hasMany(BasketDevice);
+BasketDevice.belongsTo(Device);
+// BasketDevice.hasOne(Device); // ???
+// Device.belongsTo(BasketDevice); // ???
 
 Type.hasMany(Device);
 Device.belongsTo(Type);
